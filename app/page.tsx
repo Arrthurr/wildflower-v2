@@ -1,65 +1,120 @@
-import Image from "next/image";
+import type { Metadata } from "next";
+import { HeroSection } from "@/components/hero-section";
+import { HomeEpisodePreview } from "@/components/home-episode-preview";
+import { fetchFiresideEpisodes } from "@/lib/fireside";
+import { rssUrlForShow, SHOWS } from "@/lib/shows";
+import { getSiteUrl } from "@/lib/site-url";
+import Link from "next/link";
 
-export default function Home() {
+export const revalidate = 3600;
+
+export async function generateMetadata(): Promise<Metadata> {
+  const base = getSiteUrl();
+  const title = "Home";
+  const description =
+    "Wildflower Media — The Music Snobs, Snobs On Film, and official merch.";
+  return {
+    title,
+    description,
+    alternates: { canonical: base },
+    openGraph: {
+      title: `${title} · Wildflower Media`,
+      description,
+      url: base,
+      type: "website",
+    },
+  };
+}
+
+async function latestForShow(slug: string) {
+  const show = SHOWS.find((s) => s.slug === slug);
+  if (!show) return [];
+  try {
+    return await fetchFiresideEpisodes(rssUrlForShow(show), { limit: 5 });
+  } catch {
+    return [];
+  }
+}
+
+export default async function Home() {
+  const siteUrl = getSiteUrl();
+  const byShow = await Promise.all(
+    SHOWS.map(async (show) => ({
+      show,
+      episodes: await latestForShow(show.slug),
+    })),
+  );
+
+  const anyEpisodes = byShow.some((b) => b.episodes.length > 0);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <div className="flex flex-col">
+      <HeroSection />
+
+      <section className="mx-auto w-full max-w-5xl px-4 py-14">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h2 className="text-2xl font-semibold tracking-tight">
+              Latest episodes
+            </h2>
+            <p className="mt-1 text-muted-foreground">
+              Fresh from the Fireside feeds. Open a show for the full player.
+            </p>
+          </div>
+          <Link
+            href="/shop"
+            className="text-sm font-medium text-primary underline-offset-4 hover:underline"
+          >
+            Shop T-shirts →
+          </Link>
+        </div>
+
+        {!anyEpisodes ? (
+          <p className="mt-8 text-muted-foreground">
+            Episodes are not available right now. You can still{" "}
+            <Link href="/shop" className="underline underline-offset-4">
+              browse the shop
+            </Link>{" "}
+            or open a show on Fireside from the cards above.
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+        ) : (
+          <div className="mt-10 grid gap-10 lg:grid-cols-2">
+            {byShow.map(({ show, episodes }) => {
+              const shareBase = `${siteUrl}/shows/${show.slug}`;
+              return (
+                <div key={show.slug} className="space-y-4">
+                  <h3 className="text-lg font-semibold">{show.title}</h3>
+                  {episodes.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">
+                      No episodes loaded.{" "}
+                      <Link
+                        href={`/shows/${show.slug}`}
+                        className="underline underline-offset-4"
+                      >
+                        Try the show page
+                      </Link>
+                      .
+                    </p>
+                  ) : (
+                    <ul className="flex flex-col gap-3">
+                      {episodes.map((ep) => (
+                        <li key={ep.guid}>
+                          <HomeEpisodePreview
+                            episode={ep}
+                            showSlug={show.slug}
+                            showTitle={show.title}
+                            shareBaseUrl={shareBase}
+                          />
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </section>
     </div>
   );
 }
