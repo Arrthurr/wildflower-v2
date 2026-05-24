@@ -1,7 +1,14 @@
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import type { NextConfig } from "next";
 
+const projectRoot = path.dirname(fileURLToPath(import.meta.url));
+
 const nextConfig: NextConfig = {
-  /* If you see a multi-lockfile Turbopack root warning, set turbopack.root to this package directory. */
+  turbopack: {
+    /* Avoid inferring workspace root from a parent-directory lockfile (e.g. ~/bun.lock). */
+    root: projectRoot,
+  },
   async redirects() {
     return [
       // Add 301s here after auditing the live WordPress URL structure (see MVP plan Unit 6).
