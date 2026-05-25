@@ -9,7 +9,15 @@
     "lint": "eslint",
     "test": "vitest run",
     "convex:dev": "convex dev",
-    "convex:deploy": "convex deploy"
+    "convex:deploy": "convex deploy",
+    "e2e:sync-convex": "node scripts/sync-convex-env.mjs",
+    "e2e:set-printful-key": "node scripts/set-printful-api-key.mjs",
+    "e2e:register-webhooks": "node scripts/register-webhooks.mjs",
+    "e2e:test-printful-webhook": "node scripts/test-printful-webhook.mjs",
+    "e2e:webhook": "node scripts/run-e2e-webhook-test.mjs",
+    "e2e:webhook-urls": "node scripts/print-webhook-urls.mjs",
+    "e2e:polar-products": "node scripts/polar-list-products.mjs",
+    "e2e:pipeline": "node scripts/run-e2e-checkout-pipeline.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.3.0",
@@ -18,7 +26,7 @@
     "@polar-sh/sdk": "^0.47.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "convex": "^1.35.1",
+    "convex": "^1.39.1",
     "lucide-react": "^1.8.0",
     "next": "^16.2.6",
     "react": "19.2.4",
