@@ -10,9 +10,12 @@
 
 import type * as cartItems from "../cartItems.js";
 import type * as checkout from "../checkout.js";
+import type * as crons from "../crons.js";
 import type * as fulfillment from "../fulfillment.js";
+import type * as fulfillmentPolicy from "../fulfillmentPolicy.js";
 import type * as http from "../http.js";
 import type * as orders from "../orders.js";
+import type * as printfulWebhook from "../printfulWebhook.js";
 import type * as shareEvents from "../shareEvents.js";
 import type * as sponsorInquiries from "../sponsorInquiries.js";
 import type * as users from "../users.js";
@@ -26,9 +29,12 @@ import type {
 declare const fullApi: ApiFromModules<{
   cartItems: typeof cartItems;
   checkout: typeof checkout;
+  crons: typeof crons;
   fulfillment: typeof fulfillment;
+  fulfillmentPolicy: typeof fulfillmentPolicy;
   http: typeof http;
   orders: typeof orders;
+  printfulWebhook: typeof printfulWebhook;
   shareEvents: typeof shareEvents;
   sponsorInquiries: typeof sponsorInquiries;
   users: typeof users;

@@ -5,6 +5,10 @@ import {
 } from "@polar-sh/sdk/webhooks";
 import { internal } from "./_generated/api";
 import { httpAction } from "./_generated/server";
+import {
+  parsePrintfulWebhook,
+  verifyPrintfulWebhookSignature,
+} from "./printfulWebhook";
 
 const http = httpRouter();
 
@@ -84,8 +88,62 @@ http.route({
 http.route({
   path: "/webhooks/printful",
   method: "POST",
-  handler: httpAction(async () => {
-    return new Response("Printful webhook not configured yet", { status: 501 });
+  handler: httpAction(async (ctx, request) => {
+    const rawBody = await request.text();
+    const secret = process.env.PRINTFUL_WEBHOOK_SECRET;
+
+    if (secret) {
+      const signature =
+        request.headers.get("X-Printful-Signature") ??
+        request.headers.get("X-Printful-Webhook-Signature");
+      const valid = await verifyPrintfulWebhookSignature(
+        rawBody,
+        signature,
+        secret,
+      );
+      if (!valid) {
+        return new Response("Forbidden", { status: 403 });
+      }
+    }
+
+    let body: unknown;
+    try {
+      body = JSON.parse(rawBody) as unknown;
+    } catch {
+      return new Response("Invalid JSON", { status: 400 });
+    }
+
+    let parsed;
+    try {
+      parsed = parsePrintfulWebhook(body);
+    } catch {
+      return new Response("Invalid payload", { status: 400 });
+    }
+
+    if (parsed.kind === "ignored") {
+      return new Response(null, { status: 200 });
+    }
+
+    if (parsed.kind === "package_shipped") {
+      await ctx.runMutation(internal.orders.handlePrintfulWebhook, {
+        externalEventId: parsed.externalEventId,
+        eventKind: "package_shipped",
+        orderExternalId: parsed.orderExternalId,
+        printfulOrderId: parsed.printfulOrderId,
+        trackingNumber: parsed.trackingNumber,
+        trackingUrl: parsed.trackingUrl,
+      });
+    } else {
+      await ctx.runMutation(internal.orders.handlePrintfulWebhook, {
+        externalEventId: parsed.externalEventId,
+        eventKind: "order_failed",
+        orderExternalId: parsed.orderExternalId,
+        printfulOrderId: parsed.printfulOrderId,
+        failureReason: parsed.reason,
+      });
+    }
+
+    return new Response(null, { status: 200 });
   }),
 });
 
