@@ -79,7 +79,9 @@ export default defineSchema({
     .index("by_user", ["userId"])
     .index("by_clerk_user", ["clerkUserId"])
     .index("by_polar_checkout", ["polarCheckoutId"])
-    .index("by_polar_order", ["polarOrderId"]),
+    .index("by_polar_order", ["polarOrderId"])
+    .index("by_status", ["status"])
+    .index("by_printful_order_id", ["printfulOrderId"]),
 
   shareEvents: defineTable({
     showSlug: v.string(),

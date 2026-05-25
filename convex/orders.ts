@@ -1,7 +1,16 @@
 import { v } from "convex/values";
 import type { Id } from "./_generated/dataModel";
 import { internal } from "./_generated/api";
-import { internalMutation, internalQuery, query } from "./_generated/server";
+import {
+  internalMutation,
+  internalQuery,
+  query,
+  type MutationCtx,
+} from "./_generated/server";
+import {
+  MAX_FULFILLMENT_RETRIES,
+  STUCK_ORDER_AGE_MS,
+} from "./fulfillmentPolicy";
 
 export const listForUser = query({
   args: {},
@@ -148,11 +157,27 @@ export const recordFulfillmentFailure = internalMutation({
   args: {
     orderId: v.id("orders"),
     error: v.string(),
+    retryable: v.boolean(),
   },
-  handler: async (ctx, { orderId, error }) => {
+  handler: async (ctx, { orderId, error, retryable }) => {
     const order = await ctx.db.get(orderId);
     if (!order) return;
     const attempts = (order.fulfillmentAttempts ?? 0) + 1;
+
+    if (retryable && attempts < MAX_FULFILLMENT_RETRIES) {
+      await ctx.db.patch(orderId, {
+        fulfillmentAttempts: attempts,
+        lastFulfillmentError: error.slice(0, 2000),
+        updatedAt: Date.now(),
+      });
+      await ctx.scheduler.runAfter(
+        0,
+        internal.fulfillment.scheduleFulfillmentRetry,
+        { orderId, failedAttempts: attempts },
+      );
+      return;
+    }
+
     await ctx.db.patch(orderId, {
       status: "failed",
       fulfillmentAttempts: attempts,
@@ -169,11 +194,133 @@ export const recordPrintfulCreated = internalMutation({
     externalId: v.string(),
   },
   handler: async (ctx, { orderId, printfulOrderId, externalId }) => {
+    const order = await ctx.db.get(orderId);
+    if (!order) return;
+    if (order.printfulOrderId) return;
+
     await ctx.db.patch(orderId, {
       printfulOrderId,
       printfulExternalId: externalId,
       status: "fulfilling",
       updatedAt: Date.now(),
     });
+  },
+});
+
+async function findOrderForPrintfulEvent(
+  ctx: MutationCtx,
+  orderExternalId: string | undefined,
+  printfulOrderId: number | undefined,
+) {
+  if (orderExternalId) {
+    try {
+      const byExternal = await ctx.db.get(orderExternalId as Id<"orders">);
+      if (byExternal) return byExternal;
+    } catch {
+      // Not a valid Convex document id.
+    }
+  }
+
+  if (printfulOrderId !== undefined) {
+    const match = await ctx.db
+      .query("orders")
+      .withIndex("by_printful_order_id", (q) =>
+        q.eq("printfulOrderId", printfulOrderId),
+      )
+      .unique();
+    if (match) return match;
+  }
+
+  return null;
+}
+
+export const handlePrintfulWebhook = internalMutation({
+  args: {
+    externalEventId: v.string(),
+    eventKind: v.union(v.literal("package_shipped"), v.literal("order_failed")),
+    orderExternalId: v.optional(v.string()),
+    printfulOrderId: v.optional(v.number()),
+    trackingNumber: v.optional(v.string()),
+    trackingUrl: v.optional(v.string()),
+    failureReason: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const dup = await ctx.db
+      .query("processedWebhookEvents")
+      .withIndex("by_provider_event", (q) =>
+        q.eq("provider", "printful").eq("externalEventId", args.externalEventId),
+      )
+      .unique();
+    if (dup) {
+      return { duplicate: true as const };
+    }
+
+    const order = await findOrderForPrintfulEvent(
+      ctx,
+      args.orderExternalId,
+      args.printfulOrderId,
+    );
+    if (!order) {
+      return { duplicate: false as const, missing: true as const };
+    }
+
+    const now = Date.now();
+
+    if (args.eventKind === "package_shipped") {
+      if (order.status !== "shipped") {
+        await ctx.db.patch(order._id, {
+          status: "shipped",
+          trackingNumber: args.trackingNumber ?? order.trackingNumber,
+          trackingUrl: args.trackingUrl ?? order.trackingUrl,
+          printfulOrderId: args.printfulOrderId ?? order.printfulOrderId,
+          updatedAt: now,
+        });
+      }
+    } else {
+      if (order.status !== "failed" && order.status !== "shipped") {
+        await ctx.db.patch(order._id, {
+          status: "failed",
+          lastFulfillmentError: (args.failureReason ?? "Printful order failed").slice(
+            0,
+            2000,
+          ),
+          printfulOrderId: args.printfulOrderId ?? order.printfulOrderId,
+          updatedAt: now,
+        });
+      }
+    }
+
+    await ctx.db.insert("processedWebhookEvents", {
+      provider: "printful",
+      externalEventId: args.externalEventId,
+      createdAt: now,
+    });
+
+    return { duplicate: false as const };
+  },
+});
+
+export const reconcileStuckPaidOrders = internalMutation({
+  args: {},
+  handler: async (ctx) => {
+    const cutoff = Date.now() - STUCK_ORDER_AGE_MS;
+    const paid = await ctx.db
+      .query("orders")
+      .withIndex("by_status", (q) => q.eq("status", "paid"))
+      .collect();
+
+    let scheduled = 0;
+    for (const order of paid) {
+      if (order.printfulOrderId) continue;
+      if (order.createdAt > cutoff) continue;
+      if ((order.fulfillmentAttempts ?? 0) >= MAX_FULFILLMENT_RETRIES) continue;
+
+      await ctx.scheduler.runAfter(0, internal.fulfillment.submitToPrintful, {
+        orderId: order._id,
+      });
+      scheduled += 1;
+    }
+
+    return { scheduled };
   },
 });
