@@ -11,6 +11,7 @@
 import type * as cartItems from "../cartItems.js";
 import type * as checkout from "../checkout.js";
 import type * as crons from "../crons.js";
+import type * as e2eSeed from "../e2eSeed.js";
 import type * as fulfillment from "../fulfillment.js";
 import type * as fulfillmentPolicy from "../fulfillmentPolicy.js";
 import type * as http from "../http.js";
@@ -30,6 +31,7 @@ declare const fullApi: ApiFromModules<{
   cartItems: typeof cartItems;
   checkout: typeof checkout;
   crons: typeof crons;
+  e2eSeed: typeof e2eSeed;
   fulfillment: typeof fulfillment;
   fulfillmentPolicy: typeof fulfillmentPolicy;
   http: typeof http;
