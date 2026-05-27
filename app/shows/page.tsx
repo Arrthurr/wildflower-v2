@@ -1,12 +1,10 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { PageContainer } from "@/components/layout/page-container";
+import { SiteFooter } from "@/components/layout/site-footer";
 import { SHOWS } from "@/lib/shows";
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Shows",
@@ -15,26 +13,57 @@ export const metadata: Metadata = {
 
 export default function ShowsIndexPage() {
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10">
-      <h1 className="text-3xl font-semibold tracking-tight">Shows</h1>
-      <p className="mt-2 text-muted-foreground">
-        Two podcasts, one network. Pick a show for episodes and the Fireside
-        player.
-      </p>
-      <ul className="mt-8 flex flex-col gap-4">
-        {SHOWS.map((show) => (
-          <li key={show.slug}>
-            <Link href={`/shows/${show.slug}`}>
-              <Card className="transition-colors hover:bg-muted/40">
-                <CardHeader>
-                  <CardTitle>{show.title}</CardTitle>
-                  <CardDescription>{show.description}</CardDescription>
-                </CardHeader>
-              </Card>
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <>
+      <PageContainer className="py-margin-md">
+        <span className="mb-4 block text-label-caps tracking-widest text-tms-orange">
+          PODCASTS
+        </span>
+        <h1 className="text-headline-lg-mobile text-primary sm:text-headline-lg">Shows</h1>
+        <p className="mt-4 max-w-2xl font-editorial text-editorial-body text-on-surface-variant">
+          Two podcasts, one network. Pick a show for episodes and the Fireside player.
+        </p>
+        <ul className="mt-10 grid gap-gutter sm:grid-cols-2">
+          {SHOWS.map((show) => (
+            <li key={show.slug}>
+              <Link
+                href={`/shows/${show.slug}`}
+                className={cn(
+                  "group block overflow-hidden rounded-xl border border-outline-variant p-6 transition-colors",
+                  show.brandKey === "tms"
+                    ? "bg-surface-bright hover:border-tms-orange"
+                    : "bg-sof-navy text-white hover:border-tms-orange",
+                )}
+              >
+                <Image
+                  src={show.logoSrc}
+                  alt=""
+                  width={120}
+                  height={120}
+                  className={cn(
+                    "mb-4 h-24 w-auto object-contain",
+                    show.brandKey === "sof" && "brightness-0 invert",
+                  )}
+                />
+                <h2 className="text-xl font-semibold tracking-tight group-hover:text-tms-orange">
+                  {show.title}
+                </h2>
+                <p
+                  className={cn(
+                    "mt-2 text-sm",
+                    show.brandKey === "tms"
+                      ? "text-on-surface-variant"
+                      : "text-primary-fixed",
+                  )}
+                >
+                  {show.description}
+                </p>
+                <p className="mt-4 text-sm font-medium text-tms-orange">Episodes →</p>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </PageContainer>
+      <SiteFooter />
+    </>
   );
 }

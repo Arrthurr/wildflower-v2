@@ -4,6 +4,8 @@ import { useAuth } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import Link from "next/link";
 import { useState } from "react";
+import { PageContainer } from "@/components/layout/page-container";
+import { SiteFooter } from "@/components/layout/site-footer";
 import { api } from "@/convex/_generated/api";
 import { formatCents } from "@/lib/money";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -37,39 +39,32 @@ export default function CheckoutPage() {
     }
   }
 
-  if (!isSignedIn) {
-    return (
-      <div className="mx-auto max-w-3xl px-4 py-10">
-        <h1 className="text-2xl font-semibold tracking-tight">Checkout</h1>
-        <p className="mt-2 text-muted-foreground">Sign in to continue.</p>
-      </div>
-    );
-  }
-
-  const subtotal = summary?.subtotalCents ?? 0;
-  const itemCount = summary?.itemCount ?? 0;
-
-  return (
-    <div className="mx-auto max-w-3xl px-4 py-10">
-      <h1 className="text-2xl font-semibold tracking-tight">Checkout</h1>
-      <p className="mt-2 text-muted-foreground">
+  const content = !isSignedIn ? (
+    <>
+      <h1 className="text-headline-lg-mobile text-primary sm:text-2xl">Checkout</h1>
+      <p className="mt-2 text-on-surface-variant">Sign in to continue.</p>
+    </>
+  ) : (
+    <>
+      <h1 className="text-headline-lg-mobile text-primary sm:text-2xl">Checkout</h1>
+      <p className="mt-2 text-on-surface-variant">
         Pay securely with Polar. After payment, your order is sent to Printful for fulfillment.
       </p>
-
-      <div className="mt-8 rounded-xl border bg-card p-6 shadow-sm">
+      <div className="mt-8 rounded-xl border border-outline-variant bg-card p-6 shadow-sm">
         <div className="flex justify-between text-sm">
-          <span className="text-muted-foreground">Items</span>
-          <span>{itemCount}</span>
+          <span className="text-on-surface-variant">Items</span>
+          <span>{summary?.itemCount ?? 0}</span>
         </div>
         <Separator className="my-4" />
-        <div className="flex justify-between text-base font-medium">
+        <div className="flex justify-between text-base font-medium text-primary">
           <span>Subtotal</span>
-          <span>{formatCents(subtotal)}</span>
+          <span>{formatCents(summary?.subtotalCents ?? 0)}</span>
         </div>
-        <p className="mt-3 text-xs text-muted-foreground">
-          Taxes and shipping are calculated at checkout. Configure a Polar product (fixed price
-          overridden from your cart) and set{" "}
-          <code className="rounded bg-muted px-1 py-0.5 text-[0.8rem]">POLAR_MERCH_PRODUCT_ID</code>{" "}
+        <p className="mt-3 text-xs text-on-surface-variant">
+          Taxes and shipping are calculated at checkout. Configure a Polar product and set{" "}
+          <code className="rounded bg-muted px-1 py-0.5 text-[0.8rem]">
+            POLAR_MERCH_PRODUCT_ID
+          </code>{" "}
           in your environment.
         </p>
         {error ? (
@@ -78,7 +73,11 @@ export default function CheckoutPage() {
           </p>
         ) : null}
         <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-          <Button disabled={busy || itemCount === 0} onClick={() => void startCheckout()}>
+          <Button
+            variant="brand"
+            disabled={busy || (summary?.itemCount ?? 0) === 0}
+            onClick={() => void startCheckout()}
+          >
             {busy ? "Redirecting…" : "Continue to payment"}
           </Button>
           <Link
@@ -92,6 +91,13 @@ export default function CheckoutPage() {
           </Link>
         </div>
       </div>
-    </div>
+    </>
+  );
+
+  return (
+    <>
+      <PageContainer className="max-w-3xl py-margin-md">{content}</PageContainer>
+      <SiteFooter />
+    </>
   );
 }

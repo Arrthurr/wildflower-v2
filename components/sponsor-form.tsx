@@ -34,7 +34,7 @@ export function SponsorForm() {
 
   if (done) {
     return (
-      <p className="rounded-lg border border-border bg-muted/40 px-4 py-3 text-sm">
+      <p className="rounded-lg border border-outline-variant bg-surface-container-low px-4 py-3 text-sm text-on-surface-variant">
         Thanks — we received your message and will get back to you soon.
       </p>
     );
@@ -43,7 +43,7 @@ export function SponsorForm() {
   return (
     <form onSubmit={(e) => void onSubmit(e)} className="mt-8 max-w-md space-y-4">
       <div className="space-y-2">
-        <label htmlFor="sponsor-name" className="text-sm font-medium">
+        <label htmlFor="sponsor-name" className="text-sm font-medium text-primary">
           Name
         </label>
         <Input
@@ -57,7 +57,7 @@ export function SponsorForm() {
         />
       </div>
       <div className="space-y-2">
-        <label htmlFor="sponsor-email" className="text-sm font-medium">
+        <label htmlFor="sponsor-email" className="text-sm font-medium text-primary">
           Email
         </label>
         <Input
@@ -72,7 +72,7 @@ export function SponsorForm() {
         />
       </div>
       <div className="space-y-2">
-        <label htmlFor="sponsor-message" className="text-sm font-medium">
+        <label htmlFor="sponsor-message" className="text-sm font-medium text-primary">
           Message
         </label>
         <textarea
@@ -83,7 +83,7 @@ export function SponsorForm() {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           maxLength={8000}
-          className="w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-2 text-base transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 md:text-sm dark:bg-input/30"
+          className="w-full min-w-0 rounded-lg border border-outline-variant bg-transparent px-2.5 py-2 text-base transition-colors outline-none placeholder:text-on-surface-variant focus-visible:border-tms-orange focus-visible:ring-3 focus-visible:ring-tms-orange/30 md:text-sm"
         />
       </div>
       {error ? (
@@ -91,7 +91,7 @@ export function SponsorForm() {
           {error}
         </p>
       ) : null}
-      <Button type="submit" disabled={pending}>
+      <Button type="submit" variant="brand" disabled={pending}>
         {pending ? "Sending…" : "Send message"}
       </Button>
     </form>

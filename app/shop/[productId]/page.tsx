@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { PageContainer } from "@/components/layout/page-container";
+import { SiteFooter } from "@/components/layout/site-footer";
 import { ProductDetail } from "@/components/product-detail";
 import { getSyncProduct } from "@/lib/printful";
 
@@ -36,15 +38,18 @@ export default async function ProductPage(props: Props) {
   }
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10">
-      <p className="text-sm text-muted-foreground">
-        <Link href="/shop" className="underline underline-offset-4">
-          ← Back to shop
-        </Link>
-      </p>
-      <div className="mt-6">
-        <ProductDetail product={product} />
-      </div>
-    </div>
+    <>
+      <PageContainer className="py-margin-md">
+        <p className="text-sm text-on-surface-variant">
+          <Link href="/shop" className="hover:text-tms-orange underline underline-offset-4">
+            ← Back to shop
+          </Link>
+        </p>
+        <div className="mt-6">
+          <ProductDetail product={product} />
+        </div>
+      </PageContainer>
+      <SiteFooter />
+    </>
   );
 }

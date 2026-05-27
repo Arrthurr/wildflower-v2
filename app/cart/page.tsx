@@ -7,6 +7,8 @@ import { useState } from "react";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { formatCents } from "@/lib/money";
+import { PageContainer } from "@/components/layout/page-container";
+import { SiteFooter } from "@/components/layout/site-footer";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -82,15 +84,17 @@ export default function CartPage() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10">
-      <h1 className="text-3xl font-semibold tracking-tight">Cart</h1>
+    <>
+    <PageContainer className="py-margin-md">
+      <span className="mb-4 block text-label-caps tracking-widest text-tms-orange">MERCH</span>
+      <h1 className="text-headline-lg-mobile text-primary sm:text-headline-lg">Cart</h1>
 
       {!isLoaded ? (
-        <p className="mt-6 text-sm text-muted-foreground">Loading…</p>
+        <p className="mt-6 text-sm text-on-surface-variant">Loading…</p>
       ) : !isSignedIn ? (
         <Card className="mt-8">
           <CardContent className="flex flex-col items-start gap-4 py-8">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-on-surface-variant">
               Sign in to view your cart and check out.
             </p>
             <SignInButton mode="modal">
@@ -99,14 +103,14 @@ export default function CartPage() {
           </CardContent>
         </Card>
       ) : items === undefined ? (
-        <p className="mt-6 text-sm text-muted-foreground">Loading…</p>
+        <p className="mt-6 text-sm text-on-surface-variant">Loading…</p>
       ) : items.length === 0 ? (
         <Card className="mt-8">
           <CardContent className="flex flex-col items-start gap-4 py-8">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-on-surface-variant">
               Your cart is empty.
             </p>
-            <Link href="/shop" className={cn(buttonVariants())}>
+            <Link href="/shop" className={cn(buttonVariants({ variant: "brand" }))}>
               Browse the shop
             </Link>
           </CardContent>
@@ -121,7 +125,7 @@ export default function CartPage() {
                 return (
                   <li
                     key={line._id}
-                    className="flex flex-col gap-2 rounded-lg border border-border bg-card p-4"
+                    className="flex flex-col gap-2 rounded-lg border border-outline-variant bg-card p-4"
                   >
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                       <div className="min-w-0 flex-1">
@@ -129,7 +133,7 @@ export default function CartPage() {
                           {line.variantLabel ??
                             `Variant ${line.printfulVariantId}`}
                         </p>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-xs text-on-surface-variant">
                           {formatCents(line.unitPriceCents)} each
                         </p>
                       </div>
@@ -234,7 +238,7 @@ export default function CartPage() {
               <CardContent className="py-6">
                 <h2 className="text-base font-semibold">Order summary</h2>
                 <div className="mt-4 flex justify-between text-sm">
-                  <span className="text-muted-foreground">Items</span>
+                  <span className="text-on-surface-variant">Items</span>
                   <span>{itemCount}</span>
                 </div>
                 <Separator className="my-4" />
@@ -242,12 +246,12 @@ export default function CartPage() {
                   <span>Subtotal</span>
                   <span>{formatCents(subtotal)}</span>
                 </div>
-                <p className="mt-2 text-xs text-muted-foreground">
+                <p className="mt-2 text-xs text-on-surface-variant">
                   Taxes and shipping calculated at checkout.
                 </p>
                 <Link
                   href="/checkout"
-                  className={cn(buttonVariants(), "mt-6 w-full justify-center")}
+                  className={cn(buttonVariants({ variant: "brand" }), "mt-6 w-full justify-center")}
                 >
                   Checkout
                 </Link>
@@ -265,6 +269,8 @@ export default function CartPage() {
           </aside>
         </div>
       )}
-    </div>
+    </PageContainer>
+    <SiteFooter />
+    </>
   );
 }

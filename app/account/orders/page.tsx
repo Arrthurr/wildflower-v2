@@ -11,18 +11,31 @@ import { labelOrderStatus } from "@/lib/order-status";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
+const CHECKOUT_THANKS_DISMISS_MS = 12_000;
+
 function AccountOrdersContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [showCheckoutThanks, setShowCheckoutThanks] = useState(false);
+  const checkoutId = searchParams.get("checkout_id");
+  const [showCheckoutThanks, setShowCheckoutThanks] = useState(
+    () => checkoutId != null,
+  );
   const orders = useQuery(api.orders.listForUser);
 
   useEffect(() => {
-    if (searchParams.get("checkout_id")) {
-      setShowCheckoutThanks(true);
-      router.replace("/account/orders", { scroll: false });
-    }
-  }, [searchParams, router]);
+    if (!checkoutId) return;
+    router.replace("/account/orders", { scroll: false });
+  }, [checkoutId, router]);
+
+  // After the URL is cleaned, dismiss the banner (setState in timer callback, not sync in effect).
+  useEffect(() => {
+    if (checkoutId != null || !showCheckoutThanks) return;
+    const timer = window.setTimeout(
+      () => setShowCheckoutThanks(false),
+      CHECKOUT_THANKS_DISMISS_MS,
+    );
+    return () => window.clearTimeout(timer);
+  }, [checkoutId, showCheckoutThanks]);
 
   if (orders === undefined) {
     return <p className="text-sm text-muted-foreground">Loading…</p>;
@@ -31,13 +44,23 @@ function AccountOrdersContent() {
   return (
     <div>
       {showCheckoutThanks ? (
-        <p
-          className="mb-6 rounded-md border border-border bg-muted/50 px-4 py-3 text-sm text-foreground"
+        <div
+          className="mb-6 flex items-start justify-between gap-3 rounded-md border border-outline-variant bg-surface-container-low px-4 py-3 text-sm text-primary"
           role="status"
         >
-          Thanks — your payment went through. Your order will appear below as soon as it&apos;s
-          recorded (usually within a few seconds).
-        </p>
+          <p>
+            Thanks — your payment went through. Your order will appear below as soon as it&apos;s
+            recorded (usually within a few seconds).
+          </p>
+          <button
+            type="button"
+            className="shrink-0 text-on-surface-variant hover:text-primary"
+            aria-label="Dismiss thank-you message"
+            onClick={() => setShowCheckoutThanks(false)}
+          >
+            ×
+          </button>
+        </div>
       ) : null}
       <h2 className="text-lg font-semibold tracking-tight">Orders</h2>
       <p className="mt-1 text-sm text-muted-foreground">

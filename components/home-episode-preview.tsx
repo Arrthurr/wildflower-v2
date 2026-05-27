@@ -18,7 +18,7 @@ export function HomeEpisodePreview({
   const shareUrl = `${shareBaseUrl.replace(/\/$/, "")}#episode-${anchor}`;
 
   return (
-    <div className="flex gap-4 rounded-lg border border-border bg-card/50 p-4">
+    <div className="flex gap-4 rounded-lg border border-outline-variant bg-card/80 p-4">
       {episode.artworkUrl ? (
         // eslint-disable-next-line @next/next/no-img-element -- RSS artwork hosts vary
         <img
@@ -26,21 +26,21 @@ export function HomeEpisodePreview({
           alt=""
           width={80}
           height={80}
-          className="size-20 shrink-0 rounded-md object-cover bg-muted"
+          className="size-20 shrink-0 rounded-md bg-muted object-cover"
         />
       ) : null}
       <div className="min-w-0 flex-1 space-y-2">
-        <p className="text-xs font-medium text-muted-foreground">{showTitle}</p>
-        <h3 className="font-semibold leading-snug tracking-tight">
+        <p className="text-xs font-medium text-on-surface-variant">{showTitle}</p>
+        <h3 className="font-semibold leading-snug tracking-tight text-primary">
           <Link
             href={`/shows/${showSlug}#episode-${anchor}`}
-            className="hover:text-primary hover:underline"
+            className="hover:text-tms-orange hover:underline"
           >
             {episode.title}
           </Link>
         </h3>
         {episode.pubDate ? (
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-on-surface-variant">
             {new Date(episode.pubDate).toLocaleDateString(undefined, {
               year: "numeric",
               month: "short",
