@@ -14,15 +14,19 @@ export const metadata: Metadata = {
 export default function ShowsIndexPage() {
   return (
     <>
+      <div className="border-b border-outline-variant bg-surface-bright py-margin-md">
+        <PageContainer>
+          <span className="mb-4 block text-label-caps tracking-widest text-tms-orange">
+            PODCASTS
+          </span>
+          <h1 className="text-headline-lg-mobile text-primary sm:text-headline-lg">Shows</h1>
+          <p className="mt-4 max-w-2xl font-editorial text-editorial-body text-on-surface-variant">
+            Two podcasts, one network. Pick a show for episodes and the Fireside player.
+          </p>
+        </PageContainer>
+      </div>
       <PageContainer className="py-margin-md">
-        <span className="mb-4 block text-label-caps tracking-widest text-tms-orange">
-          PODCASTS
-        </span>
-        <h1 className="text-headline-lg-mobile text-primary sm:text-headline-lg">Shows</h1>
-        <p className="mt-4 max-w-2xl font-editorial text-editorial-body text-on-surface-variant">
-          Two podcasts, one network. Pick a show for episodes and the Fireside player.
-        </p>
-        <ul className="mt-10 grid gap-gutter sm:grid-cols-2">
+        <ul className="grid gap-gutter sm:grid-cols-2">
           {SHOWS.map((show) => (
             <li key={show.slug}>
               <Link
@@ -30,7 +34,7 @@ export default function ShowsIndexPage() {
                 className={cn(
                   "group block overflow-hidden rounded-xl border border-outline-variant p-6 transition-colors",
                   show.brandKey === "tms"
-                    ? "bg-surface-bright hover:border-tms-orange"
+                    ? "bg-tms-orange-tint ring-1 ring-tms-orange/20 hover:border-tms-orange"
                     : "bg-sof-navy text-white hover:border-tms-orange",
                 )}
               >

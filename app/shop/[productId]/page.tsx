@@ -45,7 +45,7 @@ export default async function ProductPage(props: Props) {
             ← Back to shop
           </Link>
         </p>
-        <div className="mt-6">
+        <div className="mt-6 rounded-xl border border-outline-variant bg-surface-container p-6 ring-1 ring-tms-orange/10">
           <ProductDetail product={product} />
         </div>
       </PageContainer>

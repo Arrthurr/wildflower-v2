@@ -26,15 +26,19 @@ export async function generateMetadata(): Promise<Metadata> {
 export default function AboutPage() {
   return (
     <>
+      <div className="border-b border-outline-variant bg-surface-bright py-margin-md">
+        <PageContainer className="max-w-3xl">
+          <span className="mb-4 block text-label-caps tracking-widest text-tms-orange">
+            NETWORK
+          </span>
+          <h1 className="text-headline-lg-mobile text-primary sm:text-headline-lg">
+            About Wildflower
+          </h1>
+        </PageContainer>
+      </div>
       <PageContainer className="max-w-3xl py-margin-md">
-        <span className="mb-4 block text-label-caps tracking-widest text-tms-orange">
-          NETWORK
-        </span>
-        <h1 className="text-headline-lg-mobile text-primary sm:text-headline-lg">
-          About Wildflower
-        </h1>
-        <div className="mt-8 space-y-6">
-          <p className="font-editorial text-editorial-body leading-relaxed text-on-surface-variant">
+        <div className="space-y-6">
+          <p className="border-l-4 border-sof-navy pl-6 font-editorial text-editorial-body leading-relaxed text-on-surface-variant">
             Wildflower Media is an independent podcast network focused on sharp
             conversation — whether the topic is music or movies. We produce{" "}
             <strong className="text-primary">The Music Snobs</strong> and{" "}
@@ -59,7 +63,7 @@ export default function AboutPage() {
             </Link>{" "}
             page. For episode archives and RSS, each show page links out to Fireside.
           </p>
-          <p className="text-label-caps text-on-surface-variant">{BRAND.tagline}</p>
+          <p className="text-label-caps text-sof-navy">{BRAND.tagline}</p>
         </div>
       </PageContainer>
       <SiteFooter />

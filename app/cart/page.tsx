@@ -85,10 +85,13 @@ export default function CartPage() {
 
   return (
     <>
+    <div className="border-b border-outline-variant bg-surface-container py-margin-md">
+      <PageContainer>
+        <span className="mb-4 block text-label-caps tracking-widest text-tms-orange">MERCH</span>
+        <h1 className="text-headline-lg-mobile text-primary sm:text-headline-lg">Cart</h1>
+      </PageContainer>
+    </div>
     <PageContainer className="py-margin-md">
-      <span className="mb-4 block text-label-caps tracking-widest text-tms-orange">MERCH</span>
-      <h1 className="text-headline-lg-mobile text-primary sm:text-headline-lg">Cart</h1>
-
       {!isLoaded ? (
         <p className="mt-6 text-sm text-on-surface-variant">Loading…</p>
       ) : !isSignedIn ? (
@@ -234,7 +237,7 @@ export default function CartPage() {
           </div>
 
           <aside className="lg:sticky lg:top-20 lg:self-start">
-            <Card>
+            <Card className="border-tms-orange/30 ring-1 ring-tms-orange/20">
               <CardContent className="py-6">
                 <h2 className="text-base font-semibold">Order summary</h2>
                 <div className="mt-4 flex justify-between text-sm">

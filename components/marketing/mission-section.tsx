@@ -4,7 +4,7 @@ import { PageContainer } from "@/components/layout/page-container";
 
 export function MissionSection() {
   return (
-    <section className="border-y border-outline-variant bg-white py-24">
+    <section className="border-y border-outline-variant bg-surface-bright py-24">
       <PageContainer className="text-center">
         <div className="mx-auto max-w-3xl">
           <MaterialIcon name="mic" className="mb-8 text-4xl text-tms-orange" />

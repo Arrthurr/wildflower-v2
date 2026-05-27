@@ -1,7 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0..1,0&display=swap");
 
 @custom-variant dark (&:is(.dark *));
 
@@ -11,6 +10,8 @@
   --color-tms-orange: #fa9819;
   --color-deep-orange: #cd4900;
   --color-sof-navy: #1e3d59;
+  --color-tms-orange-tint: #fff4e5;
+  --color-surface: #eef1f5;
   --color-surface-bright: #f7fafe;
   --color-surface-blue: #b6c9cf;
   --color-surface-tint: #43617f;

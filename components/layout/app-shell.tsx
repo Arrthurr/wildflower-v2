@@ -19,7 +19,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <div className="flex h-dvh overflow-hidden bg-background">
       <SiteSidebar />
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-14 shrink-0 items-center border-b border-outline-variant bg-surface-container-low px-4 lg:hidden">
+        <header className="flex h-14 shrink-0 items-center border-b border-tms-orange/30 bg-surface-container-low px-4 lg:hidden">
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger
               className={cn(buttonVariants({ variant: "ghost", size: "icon" }))}
@@ -34,7 +34,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               </div>
             </SheetContent>
           </Sheet>
-          <span className="ml-3 font-semibold text-primary">Wildflower Media</span>
+          <span className="ml-3 font-semibold text-sof-navy">Wildflower Media</span>
         </header>
         <main className="main-scroll-area flex-1 overflow-y-auto">{children}</main>
       </div>

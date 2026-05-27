@@ -80,8 +80,8 @@ export function ProductDetail({ product }: { product: PrintfulSyncProductDetail 
                   className={cn(
                     "rounded-md border px-3 py-2 text-sm transition-colors",
                     selected?.id === v.id
-                      ? "border-primary bg-primary/5 text-primary"
-                      : "border-outline-variant hover:bg-surface-container-low",
+                      ? "border-tms-orange bg-tms-orange/10 text-primary"
+                      : "border-outline-variant hover:border-tms-orange/40 hover:bg-surface-container-low",
                   )}
                 >
                   {v.name}

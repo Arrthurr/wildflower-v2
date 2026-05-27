@@ -30,8 +30,8 @@ export function AccountNav() {
             className={cn(
               "rounded-md px-3 py-2 text-sm font-medium transition-colors",
               active
-                ? "bg-surface-container text-primary"
-                : "text-on-surface-variant hover:bg-surface-container-low hover:text-primary",
+                ? "border-l-2 border-tms-orange bg-tms-orange/10 pl-2.5 text-primary"
+                : "border-l-2 border-transparent pl-2.5 text-on-surface-variant hover:bg-surface-container-low hover:text-primary",
             )}
           >
             {label}

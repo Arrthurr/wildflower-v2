@@ -40,13 +40,16 @@ function NavLink({
       href={href}
       onClick={onNavigate}
       className={cn(
-        "flex items-center gap-3 text-ui-medium transition-all",
+        "flex items-center gap-3 border-l-2 pl-3 text-ui-medium transition-colors",
         active
-          ? "font-bold text-tms-orange"
-          : "text-primary hover:text-tms-orange",
+          ? "border-tms-orange font-bold text-tms-orange"
+          : "border-transparent text-primary hover:border-tms-orange/40 hover:text-tms-orange",
       )}
     >
-      <MaterialIcon name={icon} className="text-xl" />
+      <MaterialIcon
+        name={icon}
+        className={cn("text-xl", active ? "text-tms-orange" : undefined)}
+      />
       {label}
     </Link>
   );

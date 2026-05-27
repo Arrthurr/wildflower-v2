@@ -46,11 +46,12 @@ export default function CheckoutPage() {
     </>
   ) : (
     <>
+      <span className="mb-4 block text-label-caps tracking-widest text-tms-orange">MERCH</span>
       <h1 className="text-headline-lg-mobile text-primary sm:text-2xl">Checkout</h1>
       <p className="mt-2 text-on-surface-variant">
         Pay securely with Polar. After payment, your order is sent to Printful for fulfillment.
       </p>
-      <div className="mt-8 rounded-xl border border-outline-variant bg-card p-6 shadow-sm">
+      <div className="mt-8 rounded-xl border border-tms-orange/30 bg-card p-6 shadow-sm ring-1 ring-tms-orange/20">
         <div className="flex justify-between text-sm">
           <span className="text-on-surface-variant">Items</span>
           <span>{summary?.itemCount ?? 0}</span>

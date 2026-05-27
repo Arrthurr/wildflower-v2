@@ -59,7 +59,9 @@ export default async function ShowPage(props: Props) {
       <div
         className={cn(
           "border-b border-outline-variant py-margin-md",
-          isTms ? "bg-surface-bright" : "bg-sof-navy text-white",
+          isTms
+            ? "border-b-4 border-b-tms-orange bg-tms-orange-tint"
+            : "bg-sof-navy text-white",
         )}
       >
         <PageContainer>

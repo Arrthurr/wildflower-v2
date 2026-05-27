@@ -25,18 +25,22 @@ export async function generateMetadata(): Promise<Metadata> {
 export default function SponsorPage() {
   return (
     <>
+      <div className="border-b border-outline-variant bg-surface-bright py-margin-md">
+        <PageContainer className="max-w-3xl">
+          <span className="mb-4 block text-label-caps tracking-widest text-tms-orange">
+            PARTNERSHIPS
+          </span>
+          <h1 className="text-headline-lg-mobile text-primary sm:text-headline-lg">
+            Sponsor our shows
+          </h1>
+          <p className="mt-4 max-w-xl font-editorial text-editorial-body text-on-surface-variant">
+            Interested in reaching listeners of The Music Snobs or Snobs On Film? Tell us a
+            bit about your brand and we will follow up. There is no self-serve checkout — we
+            reply to every serious inquiry.
+          </p>
+        </PageContainer>
+      </div>
       <PageContainer className="max-w-3xl py-margin-md">
-        <span className="mb-4 block text-label-caps tracking-widest text-tms-orange">
-          PARTNERSHIPS
-        </span>
-        <h1 className="text-headline-lg-mobile text-primary sm:text-headline-lg">
-          Sponsor our shows
-        </h1>
-        <p className="mt-4 max-w-xl font-editorial text-editorial-body text-on-surface-variant">
-          Interested in reaching listeners of The Music Snobs or Snobs On Film? Tell us a
-          bit about your brand and we will follow up. There is no self-serve checkout — we
-          reply to every serious inquiry.
-        </p>
         <SponsorForm />
       </PageContainer>
       <SiteFooter />

@@ -16,7 +16,7 @@ export function TmsHeroSection({
   latestEpisode: FiresideEpisode | null;
 }) {
   return (
-    <section className="relative flex min-h-[85vh] items-center overflow-hidden bg-surface-bright py-margin-lg">
+    <section className="relative flex min-h-[85vh] items-center overflow-hidden border-y border-tms-orange/20 bg-tms-orange-tint py-margin-lg">
       <PageContainer className="grid grid-cols-1 items-center gap-gutter lg:grid-cols-12">
         <div className="z-10 lg:col-span-7">
           <span className="mb-4 block text-label-caps tracking-widest text-tms-orange">

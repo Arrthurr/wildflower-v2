@@ -12,7 +12,7 @@ export function MerchSection({
   error: string | null;
 }) {
   return (
-    <section className="bg-surface py-margin-lg">
+    <section className="bg-surface-container py-margin-lg">
       <PageContainer>
         <div className="mb-16 flex flex-col items-end justify-between gap-gutter md:flex-row">
           <div className="max-w-xl">
@@ -42,7 +42,7 @@ export function MerchSection({
         ) : null}
 
         {products.length > 0 ? (
-          <ul className="grid grid-cols-1 gap-gutter md:grid-cols-3">
+          <ul className="grid grid-cols-1 gap-gutter rounded-xl border border-outline-variant p-gutter transition-colors hover:border-tms-orange/40 md:grid-cols-3">
             {products.slice(0, 3).map((p) => (
               <li key={p.id}>
                 <ProductCard product={p} />

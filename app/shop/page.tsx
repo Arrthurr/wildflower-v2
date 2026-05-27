@@ -23,17 +23,20 @@ export default async function ShopPage() {
 
   return (
     <>
+      <div className="border-b border-outline-variant bg-surface-container py-margin-md">
+        <PageContainer>
+          <span className="mb-4 block text-label-caps tracking-widest text-tms-orange">
+            {BRAND.merchSectionEyebrow}
+          </span>
+          <h1 className="text-headline-lg-mobile text-primary sm:text-headline-lg">
+            {BRAND.merchSectionTitle}
+          </h1>
+          <p className="mt-4 max-w-2xl font-editorial text-editorial-body text-on-surface-variant">
+            T-shirts and more, fulfilled by Printful. Prices refresh every few minutes.
+          </p>
+        </PageContainer>
+      </div>
       <PageContainer className="py-margin-md">
-        <span className="mb-4 block text-label-caps tracking-widest text-tms-orange">
-          {BRAND.merchSectionEyebrow}
-        </span>
-        <h1 className="text-headline-lg-mobile text-primary sm:text-headline-lg">
-          {BRAND.merchSectionTitle}
-        </h1>
-        <p className="mt-4 max-w-2xl font-editorial text-editorial-body text-on-surface-variant">
-          T-shirts and more, fulfilled by Printful. Prices refresh every few minutes.
-        </p>
-
         {error ? (
           <p className="mt-8 rounded-lg border border-outline-variant bg-surface-container-low p-4 text-sm text-on-surface-variant">
             {error} Set{" "}

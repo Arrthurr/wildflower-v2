@@ -147,7 +147,7 @@ export function CartDrawer() {
             <SheetFooter className="gap-2 sm:flex-col">
               <Link
                 href="/checkout"
-                className={cn(buttonVariants(), "w-full justify-center")}
+                className={cn(buttonVariants({ variant: "brand" }), "w-full justify-center")}
               >
                 Checkout
               </Link>

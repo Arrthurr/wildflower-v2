@@ -17,10 +17,12 @@ Do not stretch or recolor logo marks independently of approved lockups.
 | Token | Hex | Role |
 |-------|-----|------|
 | `tms-orange` | `#FA9819` | TMS accent, active nav, CTAs |
+| `tms-orange-tint` | `#FFF4E5` | TMS section wash (hero backgrounds) |
 | `deep-orange` | `#CD4900` | Hover / emphasis |
 | `sof-navy` | `#1E3D59` | SOF sections, subscribe button |
 | `primary` | `#022742` | Headlines, body links |
 | `background` | `#f7fafe` | Page shell |
+| `surface` | `#eef1f5` | Merch / alternate section background |
 | `on-surface-variant` | `#43474d` | Secondary text |
 
 Show pages: TMS uses light surfaces; SOF uses `bg-sof-navy` with white type.
