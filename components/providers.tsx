@@ -25,7 +25,20 @@ function ClerkUserSync() {
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <ClerkProvider>
+    <ClerkProvider
+      appearance={{
+        variables: {
+          colorPrimary: "#022742",
+          colorTextOnPrimaryBackground: "#ffffff",
+        },
+        elements: {
+          formButtonPrimary: {
+            backgroundColor: "#FA9819",
+            color: "#ffffff",
+          },
+        },
+      }}
+    >
       <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
         <ClerkUserSync />
         {children}

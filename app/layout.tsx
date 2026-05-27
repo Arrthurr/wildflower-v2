@@ -1,18 +1,20 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Hedvig_Letters_Serif, Rethink_Sans } from "next/font/google";
 import { Providers } from "@/components/providers";
-import { SiteHeader } from "@/components/site-header";
+import { AppShell } from "@/components/layout/app-shell";
 import { getSiteUrl } from "@/lib/site-url";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const rethinkSans = Rethink_Sans({
+  variable: "--font-rethink",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const hedvigSerif = Hedvig_Letters_Serif({
+  variable: "--font-hedvig",
   subsets: ["latin"],
+  weight: "400",
 });
 
 export const metadata: Metadata = {
@@ -35,14 +37,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">
+    <html lang="en" className={`${rethinkSans.variable} ${hedvigSerif.variable} h-full`}>
+      <head>
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0..1,0&display=swap"
+        />
+      </head>
+      <body className="h-full">
         <Providers>
-          <SiteHeader />
-          <main className="flex-1">{children}</main>
+          <AppShell>{children}</AppShell>
         </Providers>
       </body>
     </html>

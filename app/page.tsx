@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
-import { HeroSection } from "@/components/hero-section";
-import { HomeEpisodePreview } from "@/components/home-episode-preview";
+import { SiteFooter } from "@/components/layout/site-footer";
+import { MerchSection } from "@/components/marketing/merch-section";
+import { MissionSection } from "@/components/marketing/mission-section";
+import { SofFeatureSection } from "@/components/marketing/sof-feature-section";
+import { TmsHeroSection } from "@/components/marketing/tms-hero-section";
 import { fetchFiresideEpisodes } from "@/lib/fireside";
-import { rssUrlForShow, SHOWS } from "@/lib/shows";
+import { listSyncProducts } from "@/lib/printful";
 import { getSiteUrl } from "@/lib/site-url";
-import Link from "next/link";
+import { SHOWS, rssUrlForShow } from "@/lib/shows";
 
 export const revalidate = 3600;
 
@@ -26,95 +29,39 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-async function latestForShow(slug: string) {
+async function latestEpisodeForShow(slug: string) {
   const show = SHOWS.find((s) => s.slug === slug);
-  if (!show) return [];
+  if (!show) return null;
   try {
-    return await fetchFiresideEpisodes(rssUrlForShow(show), { limit: 5 });
+    const episodes = await fetchFiresideEpisodes(rssUrlForShow(show), { limit: 1 });
+    return episodes[0] ?? null;
   } catch {
-    return [];
+    return null;
   }
 }
 
 export default async function Home() {
-  const siteUrl = getSiteUrl();
-  const byShow = await Promise.all(
-    SHOWS.map(async (show) => ({
-      show,
-      episodes: await latestForShow(show.slug),
-    })),
-  );
+  const tmsShow = SHOWS.find((s) => s.brandKey === "tms")!;
+  const sofShow = SHOWS.find((s) => s.brandKey === "sof")!;
 
-  const anyEpisodes = byShow.some((b) => b.episodes.length > 0);
+  const [tmsEpisode, sofEpisode, merchResult] = await Promise.all([
+    latestEpisodeForShow(tmsShow.slug),
+    latestEpisodeForShow(sofShow.slug),
+    listSyncProducts()
+      .then((products) => ({ products, error: null as string | null }))
+      .catch((e: unknown) => ({
+        products: [] as Awaited<ReturnType<typeof listSyncProducts>>,
+        error: e instanceof Error ? e.message : "Could not load products.",
+      })),
+  ]);
 
   return (
-    <div className="flex flex-col">
-      <HeroSection />
-
-      <section className="mx-auto w-full max-w-5xl px-4 py-14">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <h2 className="text-2xl font-semibold tracking-tight">
-              Latest episodes
-            </h2>
-            <p className="mt-1 text-muted-foreground">
-              Fresh from the Fireside feeds. Open a show for the full player.
-            </p>
-          </div>
-          <Link
-            href="/shop"
-            className="text-sm font-medium text-primary underline-offset-4 hover:underline"
-          >
-            Shop T-shirts →
-          </Link>
-        </div>
-
-        {!anyEpisodes ? (
-          <p className="mt-8 text-muted-foreground">
-            Episodes are not available right now. You can still{" "}
-            <Link href="/shop" className="underline underline-offset-4">
-              browse the shop
-            </Link>{" "}
-            or open a show on Fireside from the cards above.
-          </p>
-        ) : (
-          <div className="mt-10 grid gap-10 lg:grid-cols-2">
-            {byShow.map(({ show, episodes }) => {
-              const shareBase = `${siteUrl}/shows/${show.slug}`;
-              return (
-                <div key={show.slug} className="space-y-4">
-                  <h3 className="text-lg font-semibold">{show.title}</h3>
-                  {episodes.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">
-                      No episodes loaded.{" "}
-                      <Link
-                        href={`/shows/${show.slug}`}
-                        className="underline underline-offset-4"
-                      >
-                        Try the show page
-                      </Link>
-                      .
-                    </p>
-                  ) : (
-                    <ul className="flex flex-col gap-3">
-                      {episodes.map((ep) => (
-                        <li key={ep.guid}>
-                          <HomeEpisodePreview
-                            episode={ep}
-                            showSlug={show.slug}
-                            showTitle={show.title}
-                            shareBaseUrl={shareBase}
-                          />
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </section>
-    </div>
+    <>
+      <TmsHeroSection show={tmsShow} latestEpisode={tmsEpisode} />
+      <SofFeatureSection show={sofShow} latestEpisode={sofEpisode} />
+      <MerchSection products={merchResult.products} error={merchResult.error} />
+      <MissionSection />
+      <SiteFooter />
+    </>
   );
 }

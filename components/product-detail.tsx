@@ -15,22 +15,15 @@ export function ProductDetail({ product }: { product: PrintfulSyncProductDetail 
   const addToCart = useMutation(api.cartItems.addToCart);
 
   const variants = useMemo(
-    () =>
-      [...product.sync_variants].sort((a, b) =>
-        a.name.localeCompare(b.name),
-      ),
+    () => [...product.sync_variants].sort((a, b) => a.name.localeCompare(b.name)),
     [product.sync_variants],
   );
 
-  const [selectedId, setSelectedId] = useState<number | null>(
-    variants[0]?.id ?? null,
-  );
+  const [selectedId, setSelectedId] = useState<number | null>(variants[0]?.id ?? null);
   const selected = variants.find((v) => v.id === selectedId) ?? variants[0];
   const [busy, setBusy] = useState(false);
 
-  const priceCents = selected
-    ? retailPriceToCents(selected.retail_price)
-    : 0;
+  const priceCents = selected ? retailPriceToCents(selected.retail_price) : 0;
 
   async function onAdd() {
     if (!selected || !isSignedIn) return;
@@ -56,7 +49,7 @@ export function ProductDetail({ product }: { product: PrintfulSyncProductDetail 
           <img
             src={product.thumbnail_url}
             alt=""
-            className="w-full rounded-lg border border-border bg-muted object-cover"
+            className="w-full rounded-lg border border-outline-variant bg-muted object-cover"
           />
         ) : (
           <div className="aspect-square w-full rounded-lg bg-muted" />
@@ -65,9 +58,11 @@ export function ProductDetail({ product }: { product: PrintfulSyncProductDetail 
 
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-semibold tracking-tight">{product.name}</h1>
+          <h1 className="text-headline-lg-mobile font-semibold tracking-tight text-primary sm:text-3xl">
+            {product.name}
+          </h1>
           {selected ? (
-            <p className="mt-2 text-2xl font-medium">
+            <p className="mt-2 text-2xl font-medium text-primary">
               {formatCents(priceCents, selected.currency || "USD")}
             </p>
           ) : null}
@@ -75,7 +70,7 @@ export function ProductDetail({ product }: { product: PrintfulSyncProductDetail 
 
         {variants.length > 1 ? (
           <div className="space-y-2">
-            <p className="text-sm font-medium">Choose a variant</p>
+            <p className="text-sm font-medium text-primary">Choose a variant</p>
             <div className="flex flex-wrap gap-2">
               {variants.map((v) => (
                 <button
@@ -85,8 +80,8 @@ export function ProductDetail({ product }: { product: PrintfulSyncProductDetail 
                   className={cn(
                     "rounded-md border px-3 py-2 text-sm transition-colors",
                     selected?.id === v.id
-                      ? "border-primary bg-primary/5"
-                      : "border-border hover:bg-muted",
+                      ? "border-tms-orange bg-tms-orange/10 text-primary"
+                      : "border-outline-variant hover:border-tms-orange/40 hover:bg-surface-container-low",
                   )}
                 >
                   {v.name}
@@ -97,8 +92,8 @@ export function ProductDetail({ product }: { product: PrintfulSyncProductDetail 
         ) : null}
 
         {!isSignedIn ? (
-          <p className="text-sm text-muted-foreground">
-            <Link href="/sign-in" className="font-medium text-primary underline">
+          <p className="text-sm text-on-surface-variant">
+            <Link href="/sign-in" className="font-medium text-tms-orange underline">
               Sign in
             </Link>{" "}
             to add items to your cart.
@@ -106,6 +101,7 @@ export function ProductDetail({ product }: { product: PrintfulSyncProductDetail 
         ) : (
           <Button
             type="button"
+            variant="brand"
             size="lg"
             disabled={!selected || busy}
             onClick={() => void onAdd()}

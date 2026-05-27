@@ -1,10 +1,14 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { EpisodeCard } from "@/components/episode-card";
+import { PageContainer } from "@/components/layout/page-container";
+import { SiteFooter } from "@/components/layout/site-footer";
 import { fetchFiresideEpisodes } from "@/lib/fireside";
 import { getShowBySlug, rssUrlForShow, SHOWS } from "@/lib/shows";
 import { getSiteUrl } from "@/lib/site-url";
+import { cn } from "@/lib/utils";
 
 export const revalidate = 3600;
 
@@ -48,49 +52,89 @@ export default async function ShowPage(props: Props) {
     episodes = [];
   }
 
+  const isTms = show.brandKey === "tms";
+
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10">
-      <div className="space-y-2">
-        <h1 className="text-3xl font-semibold tracking-tight">{show.title}</h1>
-        <p className="text-muted-foreground">{show.description}</p>
-        <p>
-          <a
-            href={show.firesideSiteUrl}
-            className="text-sm font-medium text-primary underline underline-offset-4"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Full archive on Fireside
-          </a>
-        </p>
+    <>
+      <div
+        className={cn(
+          "border-b border-outline-variant py-margin-md",
+          isTms
+            ? "border-b-4 border-b-tms-orange bg-tms-orange-tint"
+            : "bg-sof-navy text-white",
+        )}
+      >
+        <PageContainer>
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
+            <Image
+              src={show.logoSrc}
+              alt=""
+              width={160}
+              height={160}
+              className={cn(
+                "h-32 w-auto object-contain",
+                !isTms && "brightness-0 invert",
+              )}
+            />
+            <div className="space-y-2">
+              <span
+                className={cn(
+                  "text-label-caps tracking-widest",
+                  isTms ? "text-tms-orange" : "text-primary-fixed",
+                )}
+              >
+                {show.eyebrow}
+              </span>
+              <h1 className="text-headline-lg-mobile sm:text-headline-lg">{show.title}</h1>
+              <p
+                className={cn(
+                  "max-w-2xl font-editorial text-editorial-body",
+                  isTms ? "text-on-surface-variant" : "text-primary-fixed",
+                )}
+              >
+                {show.description}
+              </p>
+              <a
+                href={show.firesideSiteUrl}
+                className="inline-block text-sm font-medium text-tms-orange underline underline-offset-4"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Full archive on Fireside
+              </a>
+            </div>
+          </div>
+        </PageContainer>
       </div>
 
-      {episodes.length === 0 ? (
-        <p className="mt-10 text-muted-foreground">
-          Episodes could not be loaded right now.{" "}
-          <Link
-            href={show.firesideSiteUrl}
-            className="underline underline-offset-4"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Open the show on Fireside
-          </Link>
-          .
-        </p>
-      ) : (
-        <div className="mt-10">
-          {episodes.map((ep) => (
-            <EpisodeCard
-              key={ep.guid}
-              episode={ep}
-              darkPlayer
-              showSlug={show.slug}
-              shareBaseUrl={shareBaseUrl}
-            />
-          ))}
-        </div>
-      )}
-    </div>
+      <PageContainer className="py-10">
+        {episodes.length === 0 ? (
+          <p className="text-on-surface-variant">
+            Episodes could not be loaded right now.{" "}
+            <Link
+              href={show.firesideSiteUrl}
+              className="underline underline-offset-4 hover:text-tms-orange"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Open the show on Fireside
+            </Link>
+            .
+          </p>
+        ) : (
+          <div>
+            {episodes.map((ep) => (
+              <EpisodeCard
+                key={ep.guid}
+                episode={ep}
+                show={show}
+                shareBaseUrl={shareBaseUrl}
+              />
+            ))}
+          </div>
+        )}
+      </PageContainer>
+      <SiteFooter />
+    </>
   );
 }
