@@ -42,3 +42,6 @@ next-env.d.ts
 
 # clerk configuration (can include secrets)
 /.clerk/
+
+# verification server state; evidence under tmp/verify-wildflower/evidence is kept on disk
+/tmp/verify-wildflower/run/
